@@ -1,0 +1,58 @@
+let orders = [];
+let loggedInDriver = null;
+
+document.getElementById('orderForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+  const restaurant = document.getElementById('restaurant').value;
+  const order = document.getElementById('order').value;
+  
+  addOrder(restaurant, order);
+  document.getElementById('orderForm').reset();
+});
+
+document.getElementById('deliveryLoginForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  // Dummy authentication - replace with real authentication logic
+  if (email === "driver@example.com" && password === "password") {
+    loggedInDriver = email;
+    displayOrders();
+  } else {
+    alert("Invalid email or password. Please try again.");
+  }
+});
+
+function addOrder(restaurant, order) {
+  const newOrder = {
+    restaurant: restaurant,
+    order: order,
+    status: "جديد"
+  };
+  orders.push(newOrder);
+  displayOrders();
+}
+
+function displayOrders() {
+  const orderList = document.getElementById('orderList');
+  orderList.innerHTML = '';
+  orders.forEach((order, index) => {
+    const listItem = document.createElement('li');
+    listItem.innerHTML = <span>${order.restaurant}: ${order.order} (${order.status})</span>;
+    if (loggedInDriver) {
+      const deliveryButton = document.createElement('button');
+      deliveryButton.textContent = "بدء التوصيل";
+      deliveryButton.addEventListener('click', function() {
+        startDelivery(index);
+      });
+      listItem.appendChild(deliveryButton);
+    }
+    orderList.appendChild(listItem);
+  });
+}
+
+function startDelivery(index) {
+  orders[index].status = "جاهز للتسليم";
+  displayOrders();
+}
